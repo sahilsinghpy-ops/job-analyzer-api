@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 import jwt
 from pwdlib import PasswordHash
-
+from jwt.exceptions import InvalidTokenError
+from fastapi import HTTPException, status
 # Change this in production! Keep it secret.
 SECRET_KEY = "super-secret-key-change-me"
 ALGORITHM = "HS256"
@@ -24,3 +25,16 @@ def create_access_token(subject: str, expires_delta: timedelta = None) -> str:
     to_encode = {"exp": expire, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def decode_access_token(token: str) -> dict:
+    try:
+        # Decode the token using our secret key
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except InvalidTokenError:
+        # If the token is fake or expired, throw a 401 error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )

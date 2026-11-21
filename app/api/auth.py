@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-
+from app.api.deps import get_current_user
 from app.db.database import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse, Token
@@ -45,3 +45,11 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     # Create token
     access_token = create_access_token(subject=user.id)
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+
+@router.get("/me", response_model=UserResponse)
+def read_users_me(current_user: User = Depends(get_current_user)):
+    # Because of get_current_user, this route is now protected.
+    # If you don't send a valid token, it will fail before reaching this line.
+    return current_user
