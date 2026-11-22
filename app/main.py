@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from app.api import auth
+from app.api import auth, resume # <--- Add resumes here
 
 app = FastAPI(title="Job Application Material Analyzer API")
 
-# This line is what connects the auth endpoints to the app
 app.include_router(auth.router)
+app.include_router(resume.router) # <--- Add this line
 
 @app.get("/health")
 def health_check():

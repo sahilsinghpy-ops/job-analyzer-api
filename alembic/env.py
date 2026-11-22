@@ -23,8 +23,16 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.db.database import Base
-from app.models.user import User # Import all your models here
+
+# IMPORT ALL YOUR MODELS HERE SO ALEMBIC CAN SEE THEM
+from app.models.user import User
+from app.models.resume import Resume
+from app.models.job_description import JobDescription
+from app.models.application import Application
+from app.models.application_event import ApplicationEvent
+
 target_metadata = Base.metadata
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
